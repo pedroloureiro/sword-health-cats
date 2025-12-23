@@ -5,5 +5,5 @@ A coding challenge that consists in creating an application using Kotlin that ut
 Requires a secrets.properties to work on the root to work.
 
 //secrets.properties
-API_KEY=live_4yUwhQaHCYB9g5OCKSFnY3pGKqUjzfIwzaqDQsPqJlWBk9pcXzly56KiTsUIBPO2
+API_KEY=<insert_api_key>
 BASE_URL=https://api.thecatapi.com/
