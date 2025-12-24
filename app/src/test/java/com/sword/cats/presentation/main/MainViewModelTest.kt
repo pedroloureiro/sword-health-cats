@@ -1,7 +1,7 @@
 package com.sword.cats.presentation.main
 
+import com.sword.cats.ModelFactory.buildCatUiModel
 import com.sword.cats.domain.main.MainInteractor
-import com.sword.cats.presentation.models.CatUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -41,13 +41,7 @@ class MainViewModelTest {
 
     @Test
     fun `search emits Loading then Loaded when interactor succeeds`() = runTest {
-        val catItems = listOf(
-            CatUiModel(
-                id = "abys",
-                name = "Abyssinian",
-                imageUrl = "https://image.url/cat.jpg"
-            )
-        )
+        val catItems = listOf(buildCatUiModel())
 
         coEvery { interactor.search() } coAnswers {
             delay(10)

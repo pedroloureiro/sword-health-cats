@@ -31,14 +31,22 @@ class MainViewModel @Inject constructor(private val interactor: MainInteractor) 
         }
     }
 
-    fun onFavoriteClick(breedId: String) {
+    fun onFavouriteClick(cat: CatUiModel) {
+        val newFavouriteValue = !cat.isFavourite
+        favouriteUiUpdate(cat.id, isFavourite = newFavouriteValue)
+        viewModelScope.launch {
+            interactor.onFavoriteClick(cat, isFavourite = newFavouriteValue)
+        }
+    }
+
+    private fun favouriteUiUpdate(catId: String, isFavourite: Boolean) {
         val currentState = _uiState.value
         if (currentState is MainUIState.Loaded) {
-            val updatedList = currentState.catList.map { breed ->
-                if (breed.id == breedId) {
-                    breed.copy(favorite = !breed.favorite)
+            val updatedList = currentState.catList.map { cat ->
+                if (cat.id == catId) {
+                    cat.copy(isFavourite = isFavourite)
                 } else {
-                    breed
+                    cat
                 }
             }
 

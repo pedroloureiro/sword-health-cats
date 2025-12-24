@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onSearchClick = viewModel::search
-    val onFavoriteClick = viewModel::onFavoriteClick
+    val onFavoriteClick = viewModel::onFavouriteClick
     val modifier = Modifier
 
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
@@ -110,7 +110,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 @Composable
 fun CatGrid(
     catBreeds: List<CatUiModel>,
-    onFavoriteClick: (String) -> Unit,
+    onFavoriteClick: (CatUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -132,7 +132,7 @@ fun CatGrid(
 @Composable
 fun CatGridItem(
     catBreed: CatUiModel,
-    onFavoriteClick: (String) -> Unit,
+    onFavoriteClick: (CatUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -142,7 +142,6 @@ fun CatGridItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Background Image
             AsyncImage(
                 model = catBreed.imageUrl,
                 contentDescription = "Photo of ${catBreed.name}",
@@ -151,13 +150,13 @@ fun CatGridItem(
             )
 
             IconButton(
-                onClick = { onFavoriteClick(catBreed.id) },
+                onClick = { onFavoriteClick(catBreed) },
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
-                    painter = painterResource(if (catBreed.favorite) R.drawable.ic_filled_star else R.drawable.ic_unfilled_star),
-                    contentDescription = "Favorite Button",
-                    tint = if (catBreed.favorite) Color.Yellow else Color.White
+                    painter = painterResource(if (catBreed.isFavourite) R.drawable.ic_filled_star else R.drawable.ic_unfilled_star),
+                    contentDescription = "Favourite Button",
+                    tint = if (catBreed.isFavourite) Color.Yellow else Color.White
                 )
             }
 

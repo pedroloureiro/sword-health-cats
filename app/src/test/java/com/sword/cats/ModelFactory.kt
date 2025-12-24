@@ -7,6 +7,9 @@ import com.sword.cats.data.api.models.CatWeightDto
 import com.sword.cats.data.api.models.FavouriteApiRequest
 import com.sword.cats.data.api.models.FavouriteApiResponse
 import com.sword.cats.data.database.CatEntity
+import com.sword.cats.presentation.models.CatUiModel
+import java.time.Instant
+import java.util.Date
 
 object ModelFactory {
     fun buildCatDto(): CatDto = CatDto(
@@ -40,11 +43,12 @@ object ModelFactory {
         suppressedTail = 0,
         shortLegs = 0,
         hypoallergenic = 0,
+        referenceImageId = "asf2",
         image = buildCatImageDto()
     )
 
     fun buildCatImageDto() = CatImageDto(
-        id = "0XYvRd7oD",
+        id = "asf2",
         width = 1204,
         height = 1445,
         url = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg"
@@ -54,22 +58,38 @@ object ModelFactory {
         id = "abys",
         name = "Abyssinian",
         description = "A friendly and active breed",
+        imageId = "asf2",
         imageUrl = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-        favorite = false,
+        favouriteId = "232413577",
+        isFavourite = true,
+        favouriteCreatedAt = buildUTCDate(),
         origin = "Egypt",
         temperament = "Active, Energetic"
     )
 
     fun buildCatFavouriteDto() = CatFavouriteDto(
-        id = "abys",
+        id = "232413577",
         userId = "user123",
-        imageId = "123",
-        subId = "123",
-        createdAt = "2023-10-28T17:39:28.000Z",
+        imageId = "asf2",
+        subId = "my-user-1234",
+        createdAt = buildUTCDate(),
         image = buildCatImageDto()
     )
 
-    fun buildFavouriteApiRequest() = FavouriteApiRequest(imageId = "asf2", subId = "my-user-1234")
+    fun buildCatUiModel() = CatUiModel(
+        id = "abys",
+        name = "Abyssinian",
+        imageId = "asf2",
+        imageUrl = buildCatImageDto().url,
+        favouriteId = "232413577",
+        isFavourite = true
+    )
 
-    fun buildFavouriteApiResponse() = FavouriteApiResponse(message = "SUCCESS", id = "232413577")
+    fun buildUTCDate(): Date = Date.from(Instant.parse("2023-10-28T17:39:28.000Z"))
+
+    fun buildFavouriteApiRequest() =
+        FavouriteApiRequest(imageId = "asf2", subId = "my-user-1234")
+
+    fun buildFavouriteApiResponse() =
+        FavouriteApiResponse(message = "SUCCESS", id = "232413577")
 }
