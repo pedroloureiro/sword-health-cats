@@ -1,6 +1,6 @@
 package com.sword.cats.domain.cats
 
-import com.sword.cats.ModelFactory.fakeBreed
+import com.sword.cats.ModelFactory.buildCatDto
 import com.sword.cats.data.api.cats.CatsService
 import com.sword.cats.data.api.models.CatDto
 import com.sword.cats.data.database.CatDao
@@ -31,7 +31,7 @@ class CatsProcessImplTest {
 
     @Test
     fun `search returns success result when service response is successful`() = runTest {
-        val breeds = listOf(fakeBreed())
+        val breeds = listOf(buildCatDto())
         val response = Response.success(breeds)
 
         coEvery { service.search() } returns response

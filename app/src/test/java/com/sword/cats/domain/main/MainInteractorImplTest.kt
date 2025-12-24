@@ -1,7 +1,7 @@
 package com.sword.cats.domain.main
 
-import com.sword.cats.ModelFactory.fakeBreed
-import com.sword.cats.ModelFactory.fakeCatEntity
+import com.sword.cats.ModelFactory.buildCatDto
+import com.sword.cats.ModelFactory.buildCatEntity
 import com.sword.cats.domain.cats.CatsProcess
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,17 +27,11 @@ class MainInteractorImplTest {
 
     @Test
     fun `searchCatBreeds returns mapped CatBreedItem list when process succeeds`() = runTest {
-        val breeds = listOf(
-            fakeBreed(
-                id = "abys",
-                name = "Abyssinian",
-                imageUrl = "https://image.url/cat.jpg"
-            )
-        )
-        val catList = listOf(fakeCatEntity())
+        val catDtoList = listOf(buildCatDto())
+        val catEntityList = listOf(buildCatEntity())
 
-        coEvery { catsProcess.search() } returns Result.success(breeds)
-        coEvery { catsProcess.save(catList) } returns Unit
+        coEvery { catsProcess.search() } returns Result.success(catDtoList)
+        coEvery { catsProcess.save(catEntityList) } returns Unit
 
         val result = interactor.search()
 
@@ -50,7 +44,7 @@ class MainInteractorImplTest {
         val item = items.first()
         assertEquals("abys", item.id)
         assertEquals("Abyssinian", item.name)
-        assertEquals("https://image.url/cat.jpg", item.imageUrl)
+        assertEquals("https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg", item.imageUrl)
         assertFalse(item.favorite)
 
         coVerify(exactly = 1) { catsProcess.search() }
@@ -58,7 +52,7 @@ class MainInteractorImplTest {
 
     @Test
     fun `searchCatBreeds returns failure when process fails`() = runTest {
-        val catList = listOf(fakeCatEntity())
+        val catList = listOf(buildCatEntity())
 
         coEvery { catsProcess.search() } returns Result.failure(Exception("Error"))
         coEvery { catsProcess.searchDb() } returns Result.success(catList)
