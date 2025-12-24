@@ -124,4 +124,36 @@ class CatsServiceImplTest {
 
         coVerify(exactly = 1) { api.setFavourite(apiRequest) }
     }
+
+    @Test
+    fun `deleteFavourite returns successful response from api`() = runTest {
+        val favouriteId = "232413577"
+        val response = Response.success(Unit)
+
+        coEvery { api.deleteFavourite(favouriteId) } returns response
+
+        val result = service.deleteFavourite(favouriteId)
+
+        assertEquals(response, result)
+
+        coVerify(exactly = 1) { api.deleteFavourite(favouriteId) }
+    }
+
+    @Test
+    fun `deleteFavourite returns error response from api`() = runTest {
+        val favouriteId = "232413577"
+        val errorResponse = Response.error<Unit>(
+            404,
+            "Not Found".toResponseBody()
+        )
+
+        coEvery { api.deleteFavourite(favouriteId) } returns errorResponse
+
+        val result = service.deleteFavourite(favouriteId)
+
+        assertEquals(404, result.code())
+        assertEquals(errorResponse, result)
+
+        coVerify(exactly = 1) { api.deleteFavourite(favouriteId) }
+    }
 }

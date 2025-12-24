@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface CatsService {
     interface Api {
@@ -19,11 +20,16 @@ interface CatsService {
 
         @POST("v1/favourites")
         suspend fun setFavourite(@Body request: FavouriteApiRequest): Response<FavouriteApiResponse>
+
+        @POST("v1/favourites/{favourite_id}")
+        suspend fun deleteFavourite(@Path("favourite_id") favouriteId: String): Response<Unit>
     }
 
     suspend fun search(): Response<List<CatDto>>
     suspend fun getFavourites(): Response<List<CatFavouriteDto>>
     suspend fun setFavourite(request: FavouriteApiRequest): Response<FavouriteApiResponse>
+    suspend fun deleteFavourite(favouriteId: String): Response<Unit>
+
 }
 
 class CatsServiceImpl(private val client: CatsService.Api): CatsService {
@@ -37,5 +43,9 @@ class CatsServiceImpl(private val client: CatsService.Api): CatsService {
 
     override suspend fun setFavourite(request: FavouriteApiRequest): Response<FavouriteApiResponse> {
         return client.setFavourite(request)
+    }
+
+    override suspend fun deleteFavourite(favouriteId: String): Response<Unit> {
+        return client.deleteFavourite(favouriteId)
     }
 }
