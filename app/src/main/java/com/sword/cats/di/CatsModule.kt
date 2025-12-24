@@ -4,14 +4,12 @@ import com.sword.cats.data.api.cats.CatsService
 import com.sword.cats.data.api.cats.CatsServiceImpl
 import com.sword.cats.data.api.common.ApiServiceFactory
 import com.sword.cats.data.database.CatDao
-import com.sword.cats.di.DIConstants.API_AUTHENTICATED
 import com.sword.cats.domain.cats.CatsProcess
 import com.sword.cats.domain.cats.CatsProcessImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -19,7 +17,7 @@ import javax.inject.Singleton
 class CatsModule {
     @Singleton
     @Provides
-    fun provideCatsService(@Named(API_AUTHENTICATED) apiServiceFactory: ApiServiceFactory): CatsService {
+    fun provideCatsService(apiServiceFactory: ApiServiceFactory): CatsService {
         return CatsServiceImpl(apiServiceFactory.getServiceClient(CatsService.Api::class))
     }
 
