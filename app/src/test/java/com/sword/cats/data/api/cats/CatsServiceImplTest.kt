@@ -2,8 +2,11 @@ package com.sword.cats.data.api.cats
 
 import com.sword.cats.ModelFactory.buildCatDto
 import com.sword.cats.ModelFactory.buildCatFavouriteDto
+import com.sword.cats.ModelFactory.buildFavouriteApiRequest
+import com.sword.cats.ModelFactory.buildFavouriteApiResponse
 import com.sword.cats.data.api.models.CatDto
 import com.sword.cats.data.api.models.CatFavouriteDto
+import com.sword.cats.data.api.models.FavouriteApiResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -86,5 +89,39 @@ class CatsServiceImplTest {
         assertEquals(errorResponse, result)
 
         coVerify(exactly = 1) { api.getFavourites() }
+    }
+
+    @Test
+    fun `setFavourite returns successful response from api`() = runTest {
+        val apiRequest = buildFavouriteApiRequest()
+        val apiResponse = buildFavouriteApiResponse()
+        val response = Response.success(apiResponse)
+
+        coEvery { api.setFavourite(apiRequest) } returns response
+
+        val result = service.setFavourite(apiRequest)
+
+        assertEquals(response, result)
+        assertEquals(apiResponse, result.body())
+
+        coVerify(exactly = 1) { api.setFavourite(apiRequest) }
+    }
+
+    @Test
+    fun `setFavourite returns error response from api`() = runTest {
+        val apiRequest = buildFavouriteApiRequest()
+        val errorResponse = Response.error<FavouriteApiResponse>(
+            404,
+            "Not Found".toResponseBody()
+        )
+
+        coEvery { api.setFavourite(apiRequest) } returns errorResponse
+
+        val result = service.setFavourite(apiRequest)
+
+        assertEquals(404, result.code())
+        assertEquals(errorResponse, result)
+
+        coVerify(exactly = 1) { api.setFavourite(apiRequest) }
     }
 }

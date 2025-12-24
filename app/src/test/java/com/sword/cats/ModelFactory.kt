@@ -4,6 +4,8 @@ import com.sword.cats.data.api.models.CatDto
 import com.sword.cats.data.api.models.CatFavouriteDto
 import com.sword.cats.data.api.models.CatImageDto
 import com.sword.cats.data.api.models.CatWeightDto
+import com.sword.cats.data.api.models.FavouriteApiRequest
+import com.sword.cats.data.api.models.FavouriteApiResponse
 import com.sword.cats.data.database.CatEntity
 
 object ModelFactory {
@@ -66,4 +68,8 @@ object ModelFactory {
         createdAt = "2023-10-28T17:39:28.000Z",
         image = buildCatImageDto()
     )
+
+    fun buildFavouriteApiRequest() = FavouriteApiRequest(imageId = "asf2", subId = "my-user-1234")
+
+    fun buildFavouriteApiResponse() = FavouriteApiResponse(message = "SUCCESS", id = "232413577")
 }
