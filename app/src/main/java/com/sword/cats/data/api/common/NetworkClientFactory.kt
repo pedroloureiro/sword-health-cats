@@ -13,8 +13,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-enum class NetworkClientType { STANDARD, AUTHENTICATED }
-
 object NetworkClientFactory {
     private const val READ_TIMEOUT_SECONDS = 30L
     private const val WRITE_TIMEOUT_SECONDS = 30L
@@ -25,19 +23,14 @@ object NetworkClientFactory {
     private const val HTTP_CACHE = "HttpCache"
 
     @JvmStatic
-    fun getClient(
-        context: Context,
-        networkClientType: NetworkClientType,
-    ): OkHttpClient {
+    fun getClient(context: Context, ): OkHttpClient {
         val builder = OkHttpClient().newBuilder()
 
         builder.connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         builder.readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         builder.writeTimeout(WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         builder.cache(getCache(context))
-        if (networkClientType == NetworkClientType.AUTHENTICATED) {
-            builder.addInterceptor(buildAuthInterceptor())
-        }
+        builder.addInterceptor(buildAuthInterceptor())
         builder.addInterceptor(buildExceptionInterceptor())
         builder.addNetworkInterceptor(buildLoggingInterceptor())
 

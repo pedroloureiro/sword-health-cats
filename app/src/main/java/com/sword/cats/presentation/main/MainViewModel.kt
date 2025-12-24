@@ -2,8 +2,8 @@ package com.sword.cats.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sword.cats.domain.main.CatBreedItem
 import com.sword.cats.domain.main.MainInteractor
+import com.sword.cats.presentation.models.CatUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 sealed class MainUIState {
     data object Idle : MainUIState()
-    data class Loaded(val catBreedList: List<CatBreedItem>): MainUIState()
+    data class Loaded(val catList: List<CatUiModel>): MainUIState()
     data object Loading: MainUIState()
 }
 
@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(private val interactor: MainInteractor) 
     fun search() {
         viewModelScope.launch {
             _uiState.value = MainUIState.Loading
-            interactor.searchCatBreeds().getOrNull()?.let { catList ->
+            interactor.search().getOrNull()?.let { catList ->
                 _uiState.value = MainUIState.Loaded(catList)
             }
         }
@@ -34,7 +34,7 @@ class MainViewModel @Inject constructor(private val interactor: MainInteractor) 
     fun onFavoriteClick(breedId: String) {
         val currentState = _uiState.value
         if (currentState is MainUIState.Loaded) {
-            val updatedList = currentState.catBreedList.map { breed ->
+            val updatedList = currentState.catList.map { breed ->
                 if (breed.id == breedId) {
                     breed.copy(favorite = !breed.favorite)
                 } else {

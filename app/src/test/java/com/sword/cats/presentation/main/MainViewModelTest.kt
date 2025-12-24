@@ -1,8 +1,7 @@
 package com.sword.cats.presentation.main
 
-
-import com.sword.cats.domain.main.CatBreedItem
 import com.sword.cats.domain.main.MainInteractor
+import com.sword.cats.presentation.models.CatUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -43,14 +42,14 @@ class MainViewModelTest {
     @Test
     fun `search emits Loading then Loaded when interactor succeeds`() = runTest {
         val catItems = listOf(
-            CatBreedItem(
+            CatUiModel(
                 id = "abys",
                 name = "Abyssinian",
                 imageUrl = "https://image.url/cat.jpg"
             )
         )
 
-        coEvery { interactor.searchCatBreeds() } coAnswers {
+        coEvery { interactor.search() } coAnswers {
             delay(10)
             Result.success(catItems)
         }
@@ -72,14 +71,14 @@ class MainViewModelTest {
             emittedStates
         )
 
-        coVerify(exactly = 1) { interactor.searchCatBreeds() }
+        coVerify(exactly = 1) { interactor.search() }
 
         job.cancel()
     }
 
     @Test
     fun `search stays in Loading when interactor fails`() = runTest {
-        coEvery { interactor.searchCatBreeds() } returns Result.failure(Exception("Error"))
+        coEvery { interactor.search() } returns Result.failure(Exception("Error"))
 
         val emittedStates = mutableListOf<MainUIState>()
         val job = launch {
@@ -97,7 +96,7 @@ class MainViewModelTest {
             emittedStates
         )
 
-        coVerify(exactly = 1) { interactor.searchCatBreeds() }
+        coVerify(exactly = 1) { interactor.search() }
 
         job.cancel()
     }

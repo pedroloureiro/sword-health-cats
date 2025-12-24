@@ -1,6 +1,7 @@
-package com.sword.cats.data.api.breeds
+package com.sword.cats.data.api.cats
 
 import com.sword.cats.ModelFactory.fakeBreed
+import com.sword.cats.data.api.models.CatDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -11,14 +12,14 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
-class BreedsServiceImplTest {
-    private lateinit var api: BreedsService.Api
-    private lateinit var service: BreedsService
+class CatsServiceImplTest {
+    private lateinit var api: CatsService.Api
+    private lateinit var service: CatsService
 
     @Before
     fun setup() {
         api = mockk()
-        service = BreedsServiceImpl(api)
+        service = CatsServiceImpl(api)
     }
 
     @Test
@@ -38,7 +39,7 @@ class BreedsServiceImplTest {
 
     @Test
     fun `search returns error response from api`() = runTest {
-        val errorResponse = Response.error<List<Breed>>(
+        val errorResponse = Response.error<List<CatDto>>(
             404,
             "Not Found".toResponseBody()
         )

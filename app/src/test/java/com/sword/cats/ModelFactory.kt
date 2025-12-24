@@ -1,8 +1,8 @@
 package com.sword.cats
 
-import com.sword.cats.data.api.breeds.Breed
-import com.sword.cats.data.api.breeds.Image
-import com.sword.cats.data.api.breeds.Weight
+import com.sword.cats.data.api.models.CatDto
+import com.sword.cats.data.api.models.CatImageDto
+import com.sword.cats.data.api.models.CatWeightDto
 import com.sword.cats.data.database.CatEntity
 
 object ModelFactory {
@@ -10,9 +10,9 @@ object ModelFactory {
         id: String = "abys",
         name: String = "Abyssinian",
         imageUrl: String? = null
-    ): Breed =
-        Breed(
-            weight = Weight("7 - 10", "3 - 5"),
+    ): CatDto =
+        CatDto(
+            weight = CatWeightDto("7 - 10", "3 - 5"),
             id = id,
             name = name,
             temperament = "Active, Energetic",
@@ -43,7 +43,7 @@ object ModelFactory {
             short_legs = 0,
             hypoallergenic = 0,
             image = imageUrl?.let {
-                Image(id = "123", width = 12, height = 12, imageUrl)
+                CatImageDto(id = "123", width = 12, height = 12, imageUrl)
             }
         )
 

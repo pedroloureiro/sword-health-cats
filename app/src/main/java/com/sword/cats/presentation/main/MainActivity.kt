@@ -39,38 +39,24 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.sword.cats.R
-import com.sword.cats.domain.main.CatBreedItem
+import com.sword.cats.presentation.models.CatUiModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme {
-                MainRoute()
-            }
-        }
+        setContent { MainScreen() }
     }
 }
 
 @Composable
-fun MainRoute(viewModel: MainViewModel = hiltViewModel()) {
+fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    MainScreen(
-        uiState = uiState,
-        onSearchClick = viewModel::search,
-        onFavoriteClick = viewModel::onFavoriteClick
-    )
-}
+    val onSearchClick = viewModel::search
+    val onFavoriteClick = viewModel::onFavoriteClick
+    val modifier = Modifier
 
-@Composable
-fun MainScreen(
-    uiState: MainUIState,
-    onSearchClick: () -> Unit,
-    onFavoriteClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier
@@ -102,10 +88,10 @@ fun MainScreen(
                 }
 
                 is MainUIState.Loaded -> {
-                    if (state.catBreedList.isEmpty()) {
+                    if (state.catList.isEmpty()) {
                         Text(text = "No cat breeds found.")
                     } else {
-                        CatBreedGrid(catBreeds = state.catBreedList, onFavoriteClick)
+                        CatGrid(catBreeds = state.catList, onFavoriteClick)
                     }
                 }
 
@@ -122,8 +108,8 @@ fun MainScreen(
 }
 
 @Composable
-fun CatBreedGrid(
-    catBreeds: List<CatBreedItem>,
+fun CatGrid(
+    catBreeds: List<CatUiModel>,
     onFavoriteClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -145,7 +131,7 @@ fun CatBreedGrid(
 
 @Composable
 fun CatGridItem(
-    catBreed: CatBreedItem,
+    catBreed: CatUiModel,
     onFavoriteClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {

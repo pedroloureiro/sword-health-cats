@@ -1,25 +1,7 @@
-package com.sword.cats.data.api.breeds
+package com.sword.cats.data.api.models
 
-import retrofit2.Response
-import retrofit2.http.GET
-
-interface BreedsService {
-    interface Api {
-        @GET("v1/breeds")
-        suspend fun search(): Response<List<Breed>>
-    }
-
-    suspend fun search(): Response<List<Breed>>
-}
-
-class BreedsServiceImpl(private val client: BreedsService.Api): BreedsService {
-    override suspend fun search(): Response<List<Breed>> {
-        return client.search()
-    }
-}
-
-data class Breed(
-    val weight: Weight,
+data class CatDto(
+    val weight: CatWeightDto,
     val id: String,
     val name: String,
     val cfa_url: String? = null,
@@ -56,17 +38,5 @@ data class Breed(
     val wikipedia_url: String? = null,
     val hypoallergenic: Int,
     val reference_image_id: String? = null,
-    val image: Image? = null
-)
-
-data class Weight(
-    val imperial: String,
-    val metric: String
-)
-
-data class Image(
-    val id: String,
-    val width: Int,
-    val height: Int,
-    val url: String
+    val image: CatImageDto? = null
 )
