@@ -1,8 +1,8 @@
-package com.sword.cats.domain.breeds
+package com.sword.cats.domain.cats
 
 import com.sword.cats.ModelFactory.fakeBreed
-import com.sword.cats.data.api.breeds.Breed
-import com.sword.cats.data.api.breeds.BreedsService
+import com.sword.cats.data.api.cats.CatsService
+import com.sword.cats.data.api.models.CatDto
 import com.sword.cats.data.database.CatDao
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,17 +16,17 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
-class BreedsProcessImplTest {
+class CatsProcessImplTest {
 
-    private lateinit var service: BreedsService
-    private lateinit var process: BreedsProcess
+    private lateinit var service: CatsService
+    private lateinit var process: CatsProcess
     private lateinit var catDao: CatDao
 
     @Before
     fun setup() {
         service = mockk()
         catDao = mockk()
-        process = BreedsProcessImpl(service, catDao)
+        process = CatsProcessImpl(service, catDao)
     }
 
     @Test
@@ -46,7 +46,7 @@ class BreedsProcessImplTest {
 
     @Test
     fun `search returns failure result when service response is error`() = runTest {
-        val response = Response.error<List<Breed>>(
+        val response = Response.error<List<CatDto>>(
             500,
             "Internal error".toResponseBody()
         )

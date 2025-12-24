@@ -1,6 +1,6 @@
 package com.sword.cats.di
 
-import com.sword.cats.domain.breeds.BreedsProcess
+import com.sword.cats.domain.cats.CatsProcess
 import com.sword.cats.domain.main.MainInteractor
 import com.sword.cats.domain.main.MainInteractorImpl
 import dagger.Module
@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 class MainModule {
     @Provides
-    fun provideMainInteractor(breedsProcess: BreedsProcess): MainInteractor {
-        return MainInteractorImpl(breedsProcess)
+    fun provideMainInteractor(catsProcess: CatsProcess): MainInteractor {
+        return MainInteractorImpl(catsProcess)
     }
 }
