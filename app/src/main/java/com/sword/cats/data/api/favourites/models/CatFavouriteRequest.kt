@@ -1,8 +1,8 @@
-package com.sword.cats.data.api.models
+package com.sword.cats.data.api.favourites.models
 
 import com.google.gson.annotations.SerializedName
 
-data class FavouriteApiRequest(
+data class CatFavouriteRequest(
     @SerializedName("image_id") val imageId: String,
     @SerializedName("sub_id") val subId: String
 )

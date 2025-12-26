@@ -1,6 +1,7 @@
-package com.sword.cats.data.api.models
+package com.sword.cats.data.api.favourites.models
 
 import com.google.gson.annotations.SerializedName
+import com.sword.cats.data.api.common.models.CatImageDto
 import java.util.Date
 
 data class CatFavouriteDto(

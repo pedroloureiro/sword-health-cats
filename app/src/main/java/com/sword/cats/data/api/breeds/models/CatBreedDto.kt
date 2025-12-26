@@ -1,8 +1,9 @@
-package com.sword.cats.data.api.models
+package com.sword.cats.data.api.breeds.models
 
 import com.google.gson.annotations.SerializedName
+import com.sword.cats.data.api.common.models.CatImageDto
 
-data class CatDto(
+data class CatBreedDto(
     val weight: CatWeightDto,
     val id: String,
     val name: String,

@@ -1,4 +1,4 @@
-package com.sword.cats.data.api.common
+package com.sword.cats.data.api.factories
 
 import com.google.gson.GsonBuilder
 import com.sword.cats.BuildConfig

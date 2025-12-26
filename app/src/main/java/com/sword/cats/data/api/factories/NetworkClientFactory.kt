@@ -1,4 +1,4 @@
-package com.sword.cats.data.api.common
+package com.sword.cats.data.api.factories
 
 import android.content.Context
 import com.sword.cats.BuildConfig

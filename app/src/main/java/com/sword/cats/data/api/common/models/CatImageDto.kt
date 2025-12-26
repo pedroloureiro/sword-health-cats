@@ -1,4 +1,4 @@
-package com.sword.cats.data.api.models
+package com.sword.cats.data.api.common.models
 
 data class CatImageDto(
     val id: String,
