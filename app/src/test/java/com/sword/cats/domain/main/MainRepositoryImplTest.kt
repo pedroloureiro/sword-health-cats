@@ -112,10 +112,10 @@ class MainRepositoryImplTest {
     fun `search should handle catsProcess search failure`() = runTest {
         val errorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
 
-        coEvery { breedsService.search() } returns Response.error(500, errorBody)
+        coEvery { breedsService.search("") } returns Response.error(500, errorBody)
         coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
 
-        repository.search()
+        repository.search("")
 
         coVerify(exactly = 0) { catDao.insertCats(any()) }
     }
@@ -124,10 +124,10 @@ class MainRepositoryImplTest {
     fun `search should handle catsProcess getFavourites failure`() = runTest {
         val errorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
 
-        coEvery { breedsService.search() } returns Response.success(emptyList())
+        coEvery { breedsService.search("") } returns Response.success(emptyList())
         coEvery { favouritesService.getFavourites() } returns Response.error(500, errorBody)
 
-        repository.search()
+        repository.search("")
 
         coVerify(exactly = 0) { catDao.insertCats(any()) }
     }
@@ -136,12 +136,12 @@ class MainRepositoryImplTest {
     fun `search should insert new cats when the database is empty`() = runTest {
         val dto = buildCatDto()
 
-        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { breedsService.search("") } returns Response.success(listOf(dto))
         coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns null
         coEvery { catDao.insertCats(any()) } just Runs
 
-        repository.search()
+        repository.search("")
 
         coVerify {
             catDao.insertCats(match { it.size == 1 })
@@ -154,11 +154,11 @@ class MainRepositoryImplTest {
         val dto = buildCatDto()
         val entity = buildCatEntity(dto, emptyList())!!
 
-        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { breedsService.search("") } returns Response.success(listOf(dto))
         coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns entity
 
-        repository.search()
+        repository.search("")
 
         coVerify(exactly = 0) { catDao.insertCats(any()) }
     }
@@ -168,14 +168,14 @@ class MainRepositoryImplTest {
         val dto = buildCatDto()
         val local = buildCatEntity()
 
-        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { breedsService.search("") } returns Response.success(listOf(dto))
         coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns local
         coEvery { favouritesService.markAsFavourite(any()) } returns
                 Response.success(buildFavouriteApiResponse())
         coEvery { catDao.insertCats(any()) } just Runs
 
-        repository.search()
+        repository.search("")
 
         coVerify {
             favouritesService.markAsFavourite(any())

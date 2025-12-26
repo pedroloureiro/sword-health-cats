@@ -49,7 +49,7 @@ class MainViewModelTest {
     @BeforeTest
     fun testSetup(){
         every { repository.observeCats() } returns MutableStateFlow(listOf(buildCatUiModel()))
-        coEvery { repository.search() } just Runs
+        coEvery { repository.search("") } just Runs
 
         viewModel = MainViewModel(repository)
     }
@@ -130,11 +130,11 @@ class MainViewModelTest {
     @Test
     fun `search transitions uiState to Loading`() = runTest {
         every { repository.observeCats() } returns MutableStateFlow(listOf(buildCatUiModel()))
-        coEvery { repository.search() } just Runs
+        coEvery { repository.search("") } just Runs
 
         viewModel = MainViewModel(repository)
 
-        viewModel.search()
+        viewModel.search("")
         advanceUntilIdle()
 
         assertEquals(MainUIState.Loading, viewModel.uiState.value)
@@ -143,27 +143,27 @@ class MainViewModelTest {
     @Test
     fun `search calls repository search method`() = runTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
-        coEvery { repository.search() } just Runs
+        coEvery { repository.search("") } just Runs
 
         viewModel = MainViewModel(repository)
 
-        viewModel.search()
+        viewModel.search("")
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repository.search() }
+        coVerify(exactly = 1) { repository.search("") }
     }
 
     @Test
     fun `search concurrent calls handling`() = runTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
-        coEvery { repository.search() } just Runs
+        coEvery { repository.search("") } just Runs
 
         viewModel = MainViewModel(repository)
 
-        repeat(3) { viewModel.search() }
+        repeat(3) { viewModel.search("") }
         advanceUntilIdle()
 
-        coVerify(exactly = 3) { repository.search() }
+        coVerify(exactly = 3) { repository.search("") }
     }
 
 

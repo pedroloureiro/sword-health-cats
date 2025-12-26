@@ -27,14 +27,14 @@ class BreedsServiceImplTest {
         val catDtoList = listOf(buildCatDto())
         val response = Response.success(catDtoList)
 
-        coEvery { api.search() } returns response
+        coEvery { api.search("") } returns response
 
-        val result = service.search()
+        val result = service.search("")
 
         assertEquals(response, result)
         assertEquals(catDtoList, result.body())
 
-        coVerify(exactly = 1) { api.search() }
+        coVerify(exactly = 1) { api.search("") }
     }
 
     @Test
@@ -44,13 +44,13 @@ class BreedsServiceImplTest {
             "Not Found".toResponseBody()
         )
 
-        coEvery { api.search() } returns errorResponse
+        coEvery { api.search("") } returns errorResponse
 
-        val result = service.search()
+        val result = service.search("")
 
         assertEquals(404, result.code())
         assertEquals(errorResponse, result)
 
-        coVerify(exactly = 1) { api.search() }
+        coVerify(exactly = 1) { api.search("") }
     }
 }

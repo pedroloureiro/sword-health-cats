@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 interface MainRepository {
     fun observeCats(): Flow<List<CatUiModel>>
-    suspend fun search()
+    suspend fun search(searchQuery: String)
     suspend fun onFavouriteClick(cat: CatUiModel)
 }
 
@@ -26,8 +26,8 @@ class MainRepositoryImpl(
         return catDao.getCatsSortedByNameAsc().map { it.toUiModelList() }
     }
 
-    override suspend fun search(): Unit = coroutineScope {
-        val searchResponse = async { breedsService.search() }.await()
+    override suspend fun search(searchQuery: String): Unit = coroutineScope {
+        val searchResponse = async { breedsService.search(searchQuery) }.await()
         val favouritesResponse = async { favouritesService.getFavourites() }.await()
 
         if (!searchResponse.isSuccessful || !favouritesResponse.isSuccessful) {
