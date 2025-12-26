@@ -1,8 +1,8 @@
-package com.sword.cats.presentation.main
+package com.sword.cats.presentation.cats_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sword.cats.domain.main.MainRepository
+import com.sword.cats.domain.cats_list.CatsListRepository
 import com.sword.cats.presentation.models.CatUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,26 +13,26 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class MainUIState {
-    data object Idle : MainUIState()
-    data class Loaded(val catList: List<CatUiModel>) : MainUIState()
-    data object Loading : MainUIState()
+sealed class CatsListUiState {
+    data object Idle : CatsListUiState()
+    data class Loaded(val catList: List<CatUiModel>) : CatsListUiState()
+    data object Loading : CatsListUiState()
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val repository: MainRepository
+class CatsListViewModel @Inject constructor(
+    private val repository: CatsListRepository
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
     private val isSearching = MutableStateFlow(false)
-    val uiState: StateFlow<MainUIState> =
+    val uiState: StateFlow<CatsListUiState> =
         combine(
             repository.observeCats(),
             searchQuery,
             isSearching
         ) { cats, query, loading ->
             if (loading) {
-                return@combine MainUIState.Loading
+                return@combine CatsListUiState.Loading
             }
             val filteredCats =
                 if (query.isBlank()) {
@@ -44,14 +44,14 @@ class MainViewModel @Inject constructor(
                 }
 
             if (filteredCats.isEmpty() && query.isBlank()) {
-                MainUIState.Idle
+                CatsListUiState.Idle
             } else {
-                MainUIState.Loaded(filteredCats)
+                CatsListUiState.Loaded(filteredCats)
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = MainUIState.Loading
+            initialValue = CatsListUiState.Loading
         )
 
     fun search(query: String) {

@@ -1,4 +1,4 @@
-package com.sword.cats.domain.main
+package com.sword.cats.domain.cats_list
 
 import com.sword.cats.data.api.breeds.BreedsService
 import com.sword.cats.data.api.favourites.FavouritesService
@@ -10,18 +10,17 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-interface MainRepository {
+interface CatsListRepository {
     fun observeCats(): Flow<List<CatUiModel>>
     suspend fun search(searchQuery: String)
     suspend fun onFavouriteClick(cat: CatUiModel)
 }
 
-class MainRepositoryImpl(
+class CatsListRepositoryImpl(
     private val breedsService: BreedsService,
     private val favouritesService: FavouritesService,
     private val catDao: CatDao
-) :
-    MainRepository {
+) : CatsListRepository {
     override fun observeCats(): Flow<List<CatUiModel>> {
         return catDao.getCatsSortedByNameAsc().map { it.toUiModelList() }
     }
@@ -35,7 +34,6 @@ class MainRepositoryImpl(
         }
         val catDtoList = searchResponse.body() ?: emptyList()
         val catFavouriteDtoList = favouritesResponse.body() ?: emptyList()
-
         val updatedCatDbList = catDtoList.mapNotNull { catDto ->
             val currentCat = catDao.getCatById(catId = catDto.id)
             val updatedCat = buildCatEntity(catDto, catFavouriteDtoList)
@@ -57,7 +55,7 @@ class MainRepositoryImpl(
             }
         }
 
-        if(updatedCatDbList.isNotEmpty()) {
+        if (updatedCatDbList.isNotEmpty()) {
             catDao.insertCats(updatedCatDbList)
         }
     }

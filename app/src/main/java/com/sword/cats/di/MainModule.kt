@@ -3,8 +3,8 @@ package com.sword.cats.di
 import com.sword.cats.data.api.breeds.BreedsService
 import com.sword.cats.data.api.favourites.FavouritesService
 import com.sword.cats.data.database.CatDao
-import com.sword.cats.domain.main.MainRepository
-import com.sword.cats.domain.main.MainRepositoryImpl
+import com.sword.cats.domain.cats_list.CatsListRepository
+import com.sword.cats.domain.cats_list.CatsListRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +18,7 @@ class MainModule {
         breedsService: BreedsService,
         favouritesService: FavouritesService,
         catDao: CatDao
-    ): MainRepository {
-        return MainRepositoryImpl(breedsService, favouritesService, catDao)
+    ): CatsListRepository {
+        return CatsListRepositoryImpl(breedsService, favouritesService, catDao)
     }
 }
