@@ -8,26 +8,45 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class MainUIState {
     data object Idle : MainUIState()
-    data class Loaded(val catList: List<CatUiModel>): MainUIState()
-    data object Loading: MainUIState()
+    data class Loaded(val catList: List<CatUiModel>) : MainUIState()
+    data object Loading : MainUIState()
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow<MainUIState>(MainUIState.Idle)
+class MainViewModel @Inject constructor(
+    private val repository: MainRepository
+) : ViewModel() {
+    private val searchQuery = MutableStateFlow("")
+    private val isSearching = MutableStateFlow(false)
     val uiState: StateFlow<MainUIState> =
-        repository.observeCats().map { cats ->
-            if (cats.isEmpty()) {
+        combine(
+            repository.observeCats(),
+            searchQuery,
+            isSearching
+        ) { cats, query, loading ->
+            if (loading) {
+                return@combine MainUIState.Loading
+            }
+            val filteredCats =
+                if (query.isBlank()) {
+                    cats
+                } else {
+                    cats.filter { cat ->
+                        cat.name.contains(query, ignoreCase = true)
+                    }
+                }
+
+            if (filteredCats.isEmpty() && query.isBlank()) {
                 MainUIState.Idle
             } else {
-                MainUIState.Loaded(cats)
+                MainUIState.Loaded(filteredCats)
             }
         }.stateIn(
             scope = viewModelScope,
@@ -35,10 +54,12 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
             initialValue = MainUIState.Loading
         )
 
-    fun search() {
+    fun search(query: String) {
+        searchQuery.value = query
         viewModelScope.launch {
-            _uiState.value = MainUIState.Loading
-            repository.search()
+            isSearching.value = true
+            repository.search(query)
+            isSearching.value = false
         }
     }
 

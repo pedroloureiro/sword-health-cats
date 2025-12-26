@@ -17,23 +17,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,20 +47,28 @@ import coil3.compose.AsyncImage
 import com.sword.cats.R
 import com.sword.cats.presentation.models.CatUiModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MainScreen() }
+        setContent {
+            val viewModel: MainViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            MainScreen(
+                uiState = uiState,
+                onFavoriteClick = viewModel::onFavouriteClick,
+                onSearch = viewModel::search
+            )
+        }
     }
 }
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val onSearchClick = viewModel::search
-    val onFavoriteClick = viewModel::onFavouriteClick
+fun MainScreen(uiState: MainUIState, onFavoriteClick: (CatUiModel) -> Unit, onSearch: (String) -> Unit) {
     val modifier = Modifier
 
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
@@ -65,16 +79,11 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 .padding(top = 16.dp)
         ) {
             Text(
-                text = "Hello, Cats!",
+                text = "Cats List",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(Modifier.height(8.dp))
-            Button(
-                onClick = onSearchClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Search")
-            }
+            SearchBar(onSearch)
             Spacer(Modifier.height(16.dp))
 
             when (val state = uiState) {
@@ -97,7 +106,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 
                 is MainUIState.Idle -> {
                     Text(
-                        text = "Click the button to search for cat breeds!",
+                        text = "Use the search bar to search for cat breeds!",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -105,6 +114,39 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
             }
         }
     }
+}
+
+@OptIn(FlowPreview::class)
+@Composable
+fun SearchBar(
+    onSearch: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    debounceMillis: Long = 500L
+) {
+    var query by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }
+            .debounce(debounceMillis)
+            .distinctUntilChanged()
+            .collect { debouncedQuery ->
+                onSearch(debouncedQuery)
+            }
+    }
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = { query = it },
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        placeholder = { Text("Search cat breeds") },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_search),//TODO: change this to search icon
+                contentDescription = "Search bar"
+            )
+        }
+    )
 }
 
 @Composable
@@ -173,4 +215,51 @@ fun CatGridItem(
             )
         }
     }
+}
+
+@Preview(showBackground = true, name = "Main Screen - Loading")
+@Composable
+private fun MainScreenLoadingPreview() {
+    MainScreen(uiState = MainUIState.Loading, onFavoriteClick = {}, onSearch = {})
+}
+
+@Preview(showBackground = true, name = "Main Screen - Idle")
+@Composable
+private fun MainScreenIdlePreview() {
+    MainScreen(uiState = MainUIState.Idle, onFavoriteClick = {}, onSearch = {})
+}
+
+@Preview(showBackground = true, name = "Main Screen - Empty List")
+@Composable
+private fun MainScreenLoadedEmptyPreview() {
+    val state = MainUIState.Loaded(emptyList())
+    MainScreen(uiState = state, onFavoriteClick = {}, onSearch = {})
+}
+
+@Preview(showBackground = true, name = "Main Screen - Loaded")
+@Composable
+private fun MainScreenLoadedPreview() {
+    val catList = listOf(
+        CatUiModel(
+            "1",
+            "Abyssinian",
+            "url1",
+            imageUrl = "",
+            favouriteId = "123",
+            isFavourite = true
+        ),
+        CatUiModel("2", "Bengal", "url2", imageUrl = "", favouriteId = null, isFavourite = false),
+        CatUiModel(
+            "3",
+            "Chartreux",
+            "url3",
+            imageUrl = "",
+            favouriteId = null,
+            isFavourite = false
+        ),
+        CatUiModel("4", "Donskoy", "url4", imageUrl = "", favouriteId = "321", isFavourite = true),
+        CatUiModel("5", "Exotic", "url5", imageUrl = "", favouriteId = null, isFavourite = false),
+    )
+    val state = MainUIState.Loaded(catList)
+    MainScreen(uiState = state, onFavoriteClick = {}, onSearch = {})
 }
