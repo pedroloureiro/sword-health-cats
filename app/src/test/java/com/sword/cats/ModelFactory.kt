@@ -12,10 +12,15 @@ import java.time.Instant
 import java.util.Date
 
 object ModelFactory {
+    const val CAT_ID = "abys"
+    const val CAT_NAME = "Abyssinian"
+    const val CAT_FAVOURITE_ID = "232413577"
+    const val CAT_IMAGE_ID = "0XYvRd7oD"
+
     fun buildCatDto(): CatDto = CatDto(
         weight = CatWeightDto("7 - 10", "3 - 5"),
-        id = "abys",
-        name = "Abyssinian",
+        id = CAT_ID,
+        name = CAT_NAME,
         temperament = "Active, Energetic",
         origin = "Egypt",
         countryCodes = "EG",
@@ -43,53 +48,52 @@ object ModelFactory {
         suppressedTail = 0,
         shortLegs = 0,
         hypoallergenic = 0,
-        referenceImageId = "asf2",
+        referenceImageId = CAT_IMAGE_ID,
         image = buildCatImageDto()
     )
 
     fun buildCatImageDto() = CatImageDto(
-        id = "asf2",
+        id = CAT_IMAGE_ID,
         width = 1204,
         height = 1445,
         url = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg"
     )
 
     fun buildCatEntity() = CatEntity(
-        id = "abys",
-        name = "Abyssinian",
+        id = CAT_ID,
+        name = CAT_NAME,
         description = "A friendly and active breed",
-        imageId = "asf2",
+        imageId = CAT_IMAGE_ID,
         imageUrl = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-        favouriteId = "232413577",
+        favouriteId = CAT_FAVOURITE_ID,
         isFavourite = true,
-        favouriteCreatedAt = buildUTCDate(),
         origin = "Egypt",
         temperament = "Active, Energetic"
     )
 
     fun buildCatFavouriteDto() = CatFavouriteDto(
-        id = "232413577",
+        id = CAT_FAVOURITE_ID,
         userId = "user123",
-        imageId = "asf2",
+        imageId = CAT_IMAGE_ID,
         subId = "my-user-1234",
         createdAt = buildUTCDate(),
         image = buildCatImageDto()
     )
 
-    fun buildCatUiModel() = CatUiModel(
-        id = "abys",
-        name = "Abyssinian",
-        imageId = "asf2",
+    fun buildCatUiModel(isFavourite: Boolean = true, favouriteId: String? = CAT_FAVOURITE_ID) = CatUiModel(
+        id = CAT_ID,
+        name = CAT_NAME,
+        imageId = CAT_IMAGE_ID,
         imageUrl = buildCatImageDto().url,
-        favouriteId = "232413577",
-        isFavourite = true
+        favouriteId = favouriteId,
+        isFavourite = isFavourite
     )
 
     fun buildUTCDate(): Date = Date.from(Instant.parse("2023-10-28T17:39:28.000Z"))
 
     fun buildFavouriteApiRequest() =
-        FavouriteApiRequest(imageId = "asf2", subId = "my-user-1234")
+        FavouriteApiRequest(imageId = CAT_IMAGE_ID, subId = "my-user-1234")
 
     fun buildFavouriteApiResponse() =
-        FavouriteApiResponse(message = "SUCCESS", id = "232413577")
+        FavouriteApiResponse(message = "SUCCESS", id = CAT_FAVOURITE_ID)
 }

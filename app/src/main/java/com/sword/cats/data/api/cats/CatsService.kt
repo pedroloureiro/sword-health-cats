@@ -20,19 +20,23 @@ interface CatsService {
         suspend fun getFavourites(): Response<List<CatFavouriteDto>>
 
         @POST("v1/favourites")
-        suspend fun setFavourite(@Body request: FavouriteApiRequest): Response<FavouriteApiResponse>
+        suspend fun markAsFavourite(@Body request: FavouriteApiRequest): Response<FavouriteApiResponse>
 
         @DELETE("v1/favourites/{favourite_id}")
-        suspend fun deleteFavourite(@Path("favourite_id") favouriteId: String): Response<Unit>
+        suspend fun unmarkAsFavourite(@Path("favourite_id") favouriteId: String): Response<Unit>
     }
 
     suspend fun search(): Response<List<CatDto>>
     suspend fun getFavourites(): Response<List<CatFavouriteDto>>
-    suspend fun setFavourite(request: FavouriteApiRequest): Response<FavouriteApiResponse>
-    suspend fun deleteFavourite(favouriteId: String): Response<Unit>
+    suspend fun markAsFavourite(imageId: String): Response<FavouriteApiResponse>
+    suspend fun unmarkAsFavourite(favouriteId: String): Response<Unit>
 }
 
 class CatsServiceImpl(private val client: CatsService.Api): CatsService {
+    companion object {
+        private const val SUB_ID = "my-user-1234"
+    }
+
     override suspend fun search(): Response<List<CatDto>> {
         return client.search()
     }
@@ -41,11 +45,12 @@ class CatsServiceImpl(private val client: CatsService.Api): CatsService {
         return client.getFavourites()
     }
 
-    override suspend fun setFavourite(request: FavouriteApiRequest): Response<FavouriteApiResponse> {
-        return client.setFavourite(request)
+    override suspend fun markAsFavourite(imageId: String): Response<FavouriteApiResponse> {
+        val request = FavouriteApiRequest(imageId, subId = SUB_ID)
+        return client.markAsFavourite(request)
     }
 
-    override suspend fun deleteFavourite(favouriteId: String): Response<Unit> {
-        return client.deleteFavourite(favouriteId)
+    override suspend fun unmarkAsFavourite(favouriteId: String): Response<Unit> {
+        return client.unmarkAsFavourite(favouriteId)
     }
 }
