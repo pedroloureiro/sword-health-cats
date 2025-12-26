@@ -1,13 +1,11 @@
-package com.sword.cats.data.api.cats
+package com.sword.cats.data.api.favourites
 
 import com.sword.cats.ModelFactory.CAT_IMAGE_ID
-import com.sword.cats.ModelFactory.buildCatDto
 import com.sword.cats.ModelFactory.buildCatFavouriteDto
 import com.sword.cats.ModelFactory.buildFavouriteApiRequest
 import com.sword.cats.ModelFactory.buildFavouriteApiResponse
-import com.sword.cats.data.api.models.CatDto
-import com.sword.cats.data.api.models.CatFavouriteDto
-import com.sword.cats.data.api.models.FavouriteApiResponse
+import com.sword.cats.data.api.favourites.models.CatFavouriteDto
+import com.sword.cats.data.api.favourites.models.CatFavouriteResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,46 +16,14 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
-class CatsServiceImplTest {
-    private lateinit var api: CatsService.Api
-    private lateinit var service: CatsService
+class FavouritesServiceImplTest {
+    private lateinit var api: FavouritesService.Api
+    private lateinit var service: FavouritesService
 
     @Before
     fun setup() {
         api = mockk()
-        service = CatsServiceImpl(api)
-    }
-
-    @Test
-    fun `search returns successful response from api`() = runTest {
-        val catDtoList = listOf(buildCatDto())
-        val response = Response.success(catDtoList)
-
-        coEvery { api.search() } returns response
-
-        val result = service.search()
-
-        assertEquals(response, result)
-        assertEquals(catDtoList, result.body())
-
-        coVerify(exactly = 1) { api.search() }
-    }
-
-    @Test
-    fun `search returns error response from api`() = runTest {
-        val errorResponse = Response.error<List<CatDto>>(
-            404,
-            "Not Found".toResponseBody()
-        )
-
-        coEvery { api.search() } returns errorResponse
-
-        val result = service.search()
-
-        assertEquals(404, result.code())
-        assertEquals(errorResponse, result)
-
-        coVerify(exactly = 1) { api.search() }
+        service = FavouritesServiceImpl(api)
     }
 
     @Test
@@ -111,7 +77,7 @@ class CatsServiceImplTest {
     @Test
     fun `markAsFavourite returns error response from api`() = runTest {
         val apiRequest = buildFavouriteApiRequest()
-        val errorResponse = Response.error<FavouriteApiResponse>(
+        val errorResponse = Response.error<CatFavouriteResponse>(
             404,
             "Not Found".toResponseBody()
         )

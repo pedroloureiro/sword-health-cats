@@ -8,7 +8,8 @@ import com.sword.cats.ModelFactory.buildCatDto
 import com.sword.cats.ModelFactory.buildCatEntity
 import com.sword.cats.ModelFactory.buildCatUiModel
 import com.sword.cats.ModelFactory.buildFavouriteApiResponse
-import com.sword.cats.data.api.cats.CatsService
+import com.sword.cats.data.api.breeds.BreedsService
+import com.sword.cats.data.api.favourites.FavouritesService
 import com.sword.cats.data.database.CatDao
 import com.sword.cats.data.database.CatEntity
 import com.sword.cats.presentation.models.CatUiModel
@@ -38,15 +39,17 @@ import retrofit2.Response
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainRepositoryImplTest {
 
-    private lateinit var catsService: CatsService
+    private lateinit var breedsService: BreedsService
+    private lateinit var favouritesService: FavouritesService
     private lateinit var catDao: CatDao
     private lateinit var repository: MainRepository
 
     @Before
     fun setup() {
-        catsService = mockk()
+        breedsService = mockk()
+        favouritesService = mockk()
         catDao = mockk()
-        repository = MainRepositoryImpl(catsService, catDao)
+        repository = MainRepositoryImpl(breedsService, favouritesService, catDao)
     }
 
     @Test
@@ -109,8 +112,8 @@ class MainRepositoryImplTest {
     fun `search should handle catsProcess search failure`() = runTest {
         val errorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
 
-        coEvery { catsService.search() } returns Response.error(500, errorBody)
-        coEvery { catsService.getFavourites() } returns Response.success(emptyList())
+        coEvery { breedsService.search() } returns Response.error(500, errorBody)
+        coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
 
         repository.search()
 
@@ -121,8 +124,8 @@ class MainRepositoryImplTest {
     fun `search should handle catsProcess getFavourites failure`() = runTest {
         val errorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
 
-        coEvery { catsService.search() } returns Response.success(emptyList())
-        coEvery { catsService.getFavourites() } returns Response.error(500, errorBody)
+        coEvery { breedsService.search() } returns Response.success(emptyList())
+        coEvery { favouritesService.getFavourites() } returns Response.error(500, errorBody)
 
         repository.search()
 
@@ -133,8 +136,8 @@ class MainRepositoryImplTest {
     fun `search should insert new cats when the database is empty`() = runTest {
         val dto = buildCatDto()
 
-        coEvery { catsService.search() } returns Response.success(listOf(dto))
-        coEvery { catsService.getFavourites() } returns Response.success(emptyList())
+        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns null
         coEvery { catDao.insertCats(any()) } just Runs
 
@@ -151,8 +154,8 @@ class MainRepositoryImplTest {
         val dto = buildCatDto()
         val entity = buildCatEntity(dto, emptyList())!!
 
-        coEvery { catsService.search() } returns Response.success(listOf(dto))
-        coEvery { catsService.getFavourites() } returns Response.success(emptyList())
+        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns entity
 
         repository.search()
@@ -165,17 +168,17 @@ class MainRepositoryImplTest {
         val dto = buildCatDto()
         val local = buildCatEntity()
 
-        coEvery { catsService.search() } returns Response.success(listOf(dto))
-        coEvery { catsService.getFavourites() } returns Response.success(emptyList())
+        coEvery { breedsService.search() } returns Response.success(listOf(dto))
+        coEvery { favouritesService.getFavourites() } returns Response.success(emptyList())
         coEvery { catDao.getCatById(CAT_ID) } returns local
-        coEvery { catsService.markAsFavourite(any()) } returns
+        coEvery { favouritesService.markAsFavourite(any()) } returns
                 Response.success(buildFavouriteApiResponse())
         coEvery { catDao.insertCats(any()) } just Runs
 
         repository.search()
 
         coVerify {
-            catsService.markAsFavourite(any())
+            favouritesService.markAsFavourite(any())
             catDao.insertCats(match {
                 it.first().isFavourite && it.first().favouriteId == CAT_FAVOURITE_ID
             })
@@ -187,7 +190,7 @@ class MainRepositoryImplTest {
         val cat = buildCatUiModel(isFavourite = false, favouriteId = null)
 
         coEvery { catDao.updateFavourite(CAT_ID, true, null) } just Runs
-        coEvery { catsService.markAsFavourite(CAT_IMAGE_ID) } returns
+        coEvery { favouritesService.markAsFavourite(CAT_IMAGE_ID) } returns
                 Response.success(buildFavouriteApiResponse())
         coEvery { catDao.updateFavouriteId(CAT_ID, CAT_FAVOURITE_ID) } just Runs
 
@@ -195,7 +198,7 @@ class MainRepositoryImplTest {
 
         coVerifyOrder {
             catDao.updateFavourite(CAT_ID, true, null)
-            catsService.markAsFavourite(CAT_IMAGE_ID)
+            favouritesService.markAsFavourite(CAT_IMAGE_ID)
             catDao.updateFavouriteId(CAT_ID, CAT_FAVOURITE_ID)
         }
     }
@@ -205,7 +208,7 @@ class MainRepositoryImplTest {
         val cat = buildCatUiModel(isFavourite = true, favouriteId = CAT_FAVOURITE_ID)
 
         coEvery { catDao.updateFavourite(CAT_ID, false, null) } just Runs
-        coEvery { catsService.unmarkAsFavourite(CAT_FAVOURITE_ID) } returns Response.success(Unit)
+        coEvery { favouritesService.unmarkAsFavourite(CAT_FAVOURITE_ID) } returns Response.success(Unit)
 
         repository.onFavouriteClick(cat)
 
@@ -213,7 +216,7 @@ class MainRepositoryImplTest {
             catDao.updateFavourite(CAT_ID, false, null)
         }
         coVerify(exactly = 1) {
-            catsService.unmarkAsFavourite(CAT_FAVOURITE_ID)
+            favouritesService.unmarkAsFavourite(CAT_FAVOURITE_ID)
         }
     }
 

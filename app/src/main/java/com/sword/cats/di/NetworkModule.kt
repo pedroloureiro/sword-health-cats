@@ -1,8 +1,8 @@
 package com.sword.cats.di
 
 import android.content.Context
-import com.sword.cats.data.api.common.ApiServiceFactory
-import com.sword.cats.data.api.common.NetworkClientFactory
+import com.sword.cats.data.api.factories.ApiServiceFactory
+import com.sword.cats.data.api.factories.NetworkClientFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

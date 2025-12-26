@@ -1,11 +1,11 @@
 package com.sword.cats
 
-import com.sword.cats.data.api.models.CatDto
-import com.sword.cats.data.api.models.CatFavouriteDto
-import com.sword.cats.data.api.models.CatImageDto
-import com.sword.cats.data.api.models.CatWeightDto
-import com.sword.cats.data.api.models.FavouriteApiRequest
-import com.sword.cats.data.api.models.FavouriteApiResponse
+import com.sword.cats.data.api.breeds.models.CatBreedDto
+import com.sword.cats.data.api.favourites.models.CatFavouriteDto
+import com.sword.cats.data.api.common.models.CatImageDto
+import com.sword.cats.data.api.breeds.models.CatWeightDto
+import com.sword.cats.data.api.favourites.models.CatFavouriteRequest
+import com.sword.cats.data.api.favourites.models.CatFavouriteResponse
 import com.sword.cats.data.database.CatEntity
 import com.sword.cats.presentation.models.CatUiModel
 import java.time.Instant
@@ -17,7 +17,7 @@ object ModelFactory {
     const val CAT_FAVOURITE_ID = "232413577"
     const val CAT_IMAGE_ID = "0XYvRd7oD"
 
-    fun buildCatDto(): CatDto = CatDto(
+    fun buildCatDto(): CatBreedDto = CatBreedDto(
         weight = CatWeightDto("7 - 10", "3 - 5"),
         id = CAT_ID,
         name = CAT_NAME,
@@ -92,8 +92,8 @@ object ModelFactory {
     fun buildUTCDate(): Date = Date.from(Instant.parse("2023-10-28T17:39:28.000Z"))
 
     fun buildFavouriteApiRequest() =
-        FavouriteApiRequest(imageId = CAT_IMAGE_ID, subId = "my-user-1234")
+        CatFavouriteRequest(imageId = CAT_IMAGE_ID, subId = "my-user-1234")
 
     fun buildFavouriteApiResponse() =
-        FavouriteApiResponse(message = "SUCCESS", id = CAT_FAVOURITE_ID)
+        CatFavouriteResponse(message = "SUCCESS", id = CAT_FAVOURITE_ID)
 }

@@ -1,7 +1,8 @@
 package com.sword.cats.domain.main
 
-import com.sword.cats.data.api.cats.CatsService
-import com.sword.cats.data.api.models.FavouriteApiResponse
+import com.sword.cats.data.api.breeds.BreedsService
+import com.sword.cats.data.api.favourites.FavouritesService
+import com.sword.cats.data.api.favourites.models.CatFavouriteResponse
 import com.sword.cats.data.database.CatDao
 import com.sword.cats.presentation.models.CatUiModel
 import kotlinx.coroutines.async
@@ -15,15 +16,19 @@ interface MainRepository {
     suspend fun onFavouriteClick(cat: CatUiModel)
 }
 
-class MainRepositoryImpl(private val catsService: CatsService, private val catDao: CatDao) :
+class MainRepositoryImpl(
+    private val breedsService: BreedsService,
+    private val favouritesService: FavouritesService,
+    private val catDao: CatDao
+) :
     MainRepository {
     override fun observeCats(): Flow<List<CatUiModel>> {
         return catDao.getCatsSortedByNameAsc().map { it.toUiModelList() }
     }
 
     override suspend fun search(): Unit = coroutineScope {
-        val searchResponse = async { catsService.search() }.await()
-        val favouritesResponse = async { catsService.getFavourites() }.await()
+        val searchResponse = async { breedsService.search() }.await()
+        val favouritesResponse = async { favouritesService.getFavourites() }.await()
 
         if (!searchResponse.isSuccessful || !favouritesResponse.isSuccessful) {
             return@coroutineScope
@@ -39,12 +44,12 @@ class MainRepositoryImpl(private val catsService: CatsService, private val catDa
                 (currentCat == updatedCat) -> null
                 (currentCat?.isFavourite == true) && (updatedCat?.isFavourite == false) -> {
                     val favouriteId =
-                        catsService.markAsFavourite(imageId = updatedCat.imageId).body()?.id
+                        favouritesService.markAsFavourite(imageId = updatedCat.imageId).body()?.id
                     updatedCat.copy(isFavourite = true, favouriteId = favouriteId)
                 }
 
                 (currentCat?.isFavourite == false) && (updatedCat?.isFavourite == true) -> {
-                    updatedCat.favouriteId?.let { catsService.unmarkAsFavourite(favouriteId = it) }
+                    updatedCat.favouriteId?.let { favouritesService.unmarkAsFavourite(favouriteId = it) }
                     updatedCat.copy(isFavourite = false, favouriteId = null)
                 }
 
@@ -72,12 +77,12 @@ class MainRepositoryImpl(private val catsService: CatsService, private val catDa
             isFavourite = true,
             favouriteId = null
         )
-        catsService.markAsFavourite(catImageId).body()?.let {
+        favouritesService.markAsFavourite(catImageId).body()?.let {
             onMarkAsFavouriteSuccess(catId, response = it)
         }
     }
 
-    private suspend fun onMarkAsFavouriteSuccess(catId: String, response: FavouriteApiResponse) {
+    private suspend fun onMarkAsFavouriteSuccess(catId: String, response: CatFavouriteResponse) {
         catDao.updateFavouriteId(catId, favouriteId = response.id)
     }
 
@@ -88,7 +93,7 @@ class MainRepositoryImpl(private val catsService: CatsService, private val catDa
             favouriteId = null
         )
         cat.favouriteId?.let { safeCatFavouriteId ->
-            catsService.unmarkAsFavourite(safeCatFavouriteId)
+            favouritesService.unmarkAsFavourite(safeCatFavouriteId)
         }
     }
 }
