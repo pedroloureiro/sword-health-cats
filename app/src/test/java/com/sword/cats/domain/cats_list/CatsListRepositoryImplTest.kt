@@ -37,7 +37,7 @@ import org.junit.Test
 import retrofit2.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainRepositoryImplTest {
+class CatsListRepositoryImplTest {
 
     private lateinit var breedsService: BreedsService
     private lateinit var favouritesService: FavouritesService
@@ -87,7 +87,6 @@ class MainRepositoryImplTest {
             }
         }
 
-        // 🔑 Let the collector start
         advanceUntilIdle()
 
         flow.emit(emptyList())

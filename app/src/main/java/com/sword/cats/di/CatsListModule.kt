@@ -12,9 +12,9 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class MainModule {
+class CatsListModule {
     @Provides
-    fun provideMainRepository(
+    fun provideCatsListRepository(
         breedsService: BreedsService,
         favouritesService: FavouritesService,
         catDao: CatDao
