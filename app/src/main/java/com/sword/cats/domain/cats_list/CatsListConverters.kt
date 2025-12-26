@@ -1,4 +1,4 @@
-package com.sword.cats.domain.main
+package com.sword.cats.domain.cats_list
 
 import com.sword.cats.data.api.breeds.models.CatBreedDto
 import com.sword.cats.data.api.favourites.models.CatFavouriteDto

@@ -1,7 +1,7 @@
-package com.sword.cats.presentation.main
+package com.sword.cats.presentation.cats_list
 
 import com.sword.cats.ModelFactory.buildCatUiModel
-import com.sword.cats.domain.main.MainRepository
+import com.sword.cats.domain.cats_list.CatsListRepository
 import com.sword.cats.presentation.models.CatUiModel
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -28,12 +28,10 @@ import org.junit.Test
 import kotlin.test.BeforeTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainViewModelTest {
-
+class CatsListViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
-
-    private lateinit var repository: MainRepository
-    private lateinit var viewModel: MainViewModel
+    private lateinit var repository: CatsListRepository
+    private lateinit var viewModel: CatsListViewModel
 
     @Before
     fun setup() {
@@ -47,20 +45,20 @@ class MainViewModelTest {
     }
 
     @BeforeTest
-    fun testSetup(){
+    fun testSetup() {
         every { repository.observeCats() } returns MutableStateFlow(listOf(buildCatUiModel()))
         coEvery { repository.search("") } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
     }
 
     @Test
     fun `uiState initial state is Loading`() = runTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
-        assertEquals(MainUIState.Loading, viewModel.uiState.value)
+        assertEquals(CatsListUiState.Loading, viewModel.uiState.value)
     }
 
     @Test
@@ -68,17 +66,15 @@ class MainViewModelTest {
         val catsFlow = MutableStateFlow(listOf(buildCatUiModel()))
         every { repository.observeCats() } returns catsFlow
 
-        viewModel = MainViewModel(repository)
-
+        viewModel = CatsListViewModel(repository)
         val job = launch {
             viewModel.uiState.collect { }
         }
 
         advanceUntilIdle()
-
         val state = viewModel.uiState.value
-        assertTrue(state is MainUIState.Loaded)
-        assertEquals(1, (state as MainUIState.Loaded).catList.size)
+        assertTrue(state is CatsListUiState.Loaded)
+        assertEquals(1, (state as CatsListUiState.Loaded).catList.size)
 
         job.cancel()
     }
@@ -88,22 +84,20 @@ class MainViewModelTest {
         val catsFlow = MutableStateFlow(emptyList<CatUiModel>())
         every { repository.observeCats() } returns catsFlow
 
-        viewModel = MainViewModel(repository)
-
+        viewModel = CatsListViewModel(repository)
         val job = launch {
             viewModel.uiState.collect { }
         }
 
         advanceUntilIdle()
 
-        assertEquals(MainUIState.Idle, viewModel.uiState.value)
+        assertEquals(CatsListUiState.Idle, viewModel.uiState.value)
         job.cancel()
     }
 
     @Test
     fun `uiState respects WhileSubscribed sharing`() = runTest {
         val upstreamCollected = mutableListOf<Boolean>()
-
         val upstream = flow {
             upstreamCollected.add(true)
             emit(emptyList<CatUiModel>())
@@ -112,11 +106,9 @@ class MainViewModelTest {
 
         every { repository.observeCats() } returns upstream
 
-        viewModel = MainViewModel(repository)
-
+        viewModel = CatsListViewModel(repository)
         // No collectors yet
         assertTrue(upstreamCollected.isEmpty())
-
         val job = launch {
             viewModel.uiState.collect { }
         }
@@ -132,12 +124,12 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(listOf(buildCatUiModel()))
         coEvery { repository.search("") } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
         viewModel.search("")
         advanceUntilIdle()
 
-        assertEquals(MainUIState.Loading, viewModel.uiState.value)
+        assertEquals(CatsListUiState.Loading, viewModel.uiState.value)
     }
 
     @Test
@@ -145,7 +137,7 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.search("") } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
         viewModel.search("")
         advanceUntilIdle()
@@ -158,7 +150,7 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.search("") } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
         repeat(3) { viewModel.search("") }
         advanceUntilIdle()
@@ -166,14 +158,12 @@ class MainViewModelTest {
         coVerify(exactly = 3) { repository.search("") }
     }
 
-
     @Test
     fun `onFavouriteClick calls repository with correct favorite status`() = runTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.onFavouriteClick(any()) } just Runs
 
-        viewModel = MainViewModel(repository)
-
+        viewModel = CatsListViewModel(repository)
         val cat = buildCatUiModel()
 
         viewModel.onFavouriteClick(cat)
@@ -191,7 +181,7 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.onFavouriteClick(cat) } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
         viewModel.onFavouriteClick(cat)
         advanceUntilIdle()
@@ -201,7 +191,6 @@ class MainViewModelTest {
         }
     }
 
-
     @Test
     fun `onFavouriteClick toggles favorite from false to true`() = runTest {
         val cat = buildCatUiModel(isFavourite = false, favouriteId = null)
@@ -209,7 +198,7 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.onFavouriteClick(cat) } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
 
         viewModel.onFavouriteClick(cat)
         advanceUntilIdle()
@@ -224,7 +213,7 @@ class MainViewModelTest {
         every { repository.observeCats() } returns MutableStateFlow(emptyList())
         coEvery { repository.onFavouriteClick(any()) } just Runs
 
-        viewModel = MainViewModel(repository)
+        viewModel = CatsListViewModel(repository)
         val cat = buildCatUiModel()
 
         repeat(5) {

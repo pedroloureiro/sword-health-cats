@@ -1,4 +1,4 @@
-package com.sword.cats.domain.main
+package com.sword.cats.domain.cats_list
 
 import com.sword.cats.ModelFactory.CAT_FAVOURITE_ID
 import com.sword.cats.ModelFactory.CAT_ID
@@ -42,14 +42,14 @@ class MainRepositoryImplTest {
     private lateinit var breedsService: BreedsService
     private lateinit var favouritesService: FavouritesService
     private lateinit var catDao: CatDao
-    private lateinit var repository: MainRepository
+    private lateinit var repository: CatsListRepository
 
     @Before
     fun setup() {
         breedsService = mockk()
         favouritesService = mockk()
         catDao = mockk()
-        repository = MainRepositoryImpl(breedsService, favouritesService, catDao)
+        repository = CatsListRepositoryImpl(breedsService, favouritesService, catDao)
     }
 
     @Test
