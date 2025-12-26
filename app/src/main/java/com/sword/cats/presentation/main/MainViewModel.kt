@@ -2,12 +2,14 @@ package com.sword.cats.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sword.cats.domain.main.MainInteractor
+import com.sword.cats.domain.main.MainRepository
 import com.sword.cats.presentation.models.CatUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,31 +20,31 @@ sealed class MainUIState {
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val interactor: MainInteractor) : ViewModel() {
+class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<MainUIState>(MainUIState.Idle)
-    val uiState: StateFlow<MainUIState> = _uiState.asStateFlow()
+    val uiState: StateFlow<MainUIState> =
+        repository.observeCats().map { cats ->
+            if (cats.isEmpty()) {
+                MainUIState.Idle
+            } else {
+                MainUIState.Loaded(cats)
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = MainUIState.Loading
+        )
 
     fun search() {
         viewModelScope.launch {
             _uiState.value = MainUIState.Loading
-            interactor.search().getOrNull()?.let { catList ->
-                _uiState.value = MainUIState.Loaded(catList)
-            }
+            repository.search()
         }
     }
 
-    fun onFavoriteClick(breedId: String) {
-        val currentState = _uiState.value
-        if (currentState is MainUIState.Loaded) {
-            val updatedList = currentState.catList.map { breed ->
-                if (breed.id == breedId) {
-                    breed.copy(favorite = !breed.favorite)
-                } else {
-                    breed
-                }
-            }
-
-            _uiState.value = MainUIState.Loaded(updatedList)
+    fun onFavouriteClick(cat: CatUiModel) {
+        viewModelScope.launch {
+            repository.onFavouriteClick(cat)
         }
     }
 }

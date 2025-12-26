@@ -1,7 +1,13 @@
 package com.sword.cats.data.api.cats
 
-import com.sword.cats.ModelFactory.fakeBreed
+import com.sword.cats.ModelFactory.CAT_IMAGE_ID
+import com.sword.cats.ModelFactory.buildCatDto
+import com.sword.cats.ModelFactory.buildCatFavouriteDto
+import com.sword.cats.ModelFactory.buildFavouriteApiRequest
+import com.sword.cats.ModelFactory.buildFavouriteApiResponse
 import com.sword.cats.data.api.models.CatDto
+import com.sword.cats.data.api.models.CatFavouriteDto
+import com.sword.cats.data.api.models.FavouriteApiResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -24,15 +30,15 @@ class CatsServiceImplTest {
 
     @Test
     fun `search returns successful response from api`() = runTest {
-        val breeds = listOf(fakeBreed())
-        val response = Response.success(breeds)
+        val catDtoList = listOf(buildCatDto())
+        val response = Response.success(catDtoList)
 
         coEvery { api.search() } returns response
 
         val result = service.search()
 
         assertEquals(response, result)
-        assertEquals(breeds, result.body())
+        assertEquals(catDtoList, result.body())
 
         coVerify(exactly = 1) { api.search() }
     }
@@ -52,5 +58,103 @@ class CatsServiceImplTest {
         assertEquals(errorResponse, result)
 
         coVerify(exactly = 1) { api.search() }
+    }
+
+    @Test
+    fun `getFavourites returns successful response from api`() = runTest {
+        val catFavouriteList = listOf(buildCatFavouriteDto())
+        val response = Response.success(catFavouriteList)
+
+        coEvery { api.getFavourites() } returns response
+
+        val result = service.getFavourites()
+
+        assertEquals(response, result)
+        assertEquals(catFavouriteList, result.body())
+
+        coVerify(exactly = 1) { api.getFavourites() }
+    }
+
+    @Test
+    fun `getFavourites returns error response from api`() = runTest {
+        val errorResponse = Response.error<List<CatFavouriteDto>>(
+            404,
+            "Not Found".toResponseBody()
+        )
+
+        coEvery { api.getFavourites() } returns errorResponse
+
+        val result = service.getFavourites()
+
+        assertEquals(404, result.code())
+        assertEquals(errorResponse, result)
+
+        coVerify(exactly = 1) { api.getFavourites() }
+    }
+
+    @Test
+    fun `markAsFavourite returns successful response from api`() = runTest {
+        val apiRequest = buildFavouriteApiRequest()
+        val apiResponse = buildFavouriteApiResponse()
+        val response = Response.success(apiResponse)
+
+        coEvery { api.markAsFavourite(apiRequest) } returns response
+
+        val result = service.markAsFavourite(CAT_IMAGE_ID)
+
+        assertEquals(response, result)
+        assertEquals(apiResponse, result.body())
+
+        coVerify(exactly = 1) { api.markAsFavourite(apiRequest) }
+    }
+
+    @Test
+    fun `markAsFavourite returns error response from api`() = runTest {
+        val apiRequest = buildFavouriteApiRequest()
+        val errorResponse = Response.error<FavouriteApiResponse>(
+            404,
+            "Not Found".toResponseBody()
+        )
+
+        coEvery { api.markAsFavourite(apiRequest) } returns errorResponse
+
+        val result = service.markAsFavourite(CAT_IMAGE_ID)
+
+        assertEquals(404, result.code())
+        assertEquals(errorResponse, result)
+
+        coVerify(exactly = 1) { api.markAsFavourite(apiRequest) }
+    }
+
+    @Test
+    fun `unmarkAsFavourite returns successful response from api`() = runTest {
+        val favouriteId = "232413577"
+        val response = Response.success(Unit)
+
+        coEvery { api.unmarkAsFavourite(favouriteId) } returns response
+
+        val result = service.unmarkAsFavourite(favouriteId)
+
+        assertEquals(response, result)
+
+        coVerify(exactly = 1) { api.unmarkAsFavourite(favouriteId) }
+    }
+
+    @Test
+    fun `unmarkAsFavourite returns error response from api`() = runTest {
+        val favouriteId = "232413577"
+        val errorResponse = Response.error<Unit>(
+            404,
+            "Not Found".toResponseBody()
+        )
+
+        coEvery { api.unmarkAsFavourite(favouriteId) } returns errorResponse
+
+        val result = service.unmarkAsFavourite(favouriteId)
+
+        assertEquals(404, result.code())
+        assertEquals(errorResponse, result)
+
+        coVerify(exactly = 1) { api.unmarkAsFavourite(favouriteId) }
     }
 }
