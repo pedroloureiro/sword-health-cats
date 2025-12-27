@@ -19,11 +19,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import com.sword.cats.presentation.CatDetails
 import com.sword.cats.presentation.components.CatGrid
 import com.sword.cats.presentation.components.SearchBar
 
 @Composable
-fun CatsListScreen() {
+fun CatsListScreen(navController: NavHostController) {
     val viewModel: CatsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val modifier = Modifier
@@ -57,7 +59,11 @@ fun CatsListScreen() {
                     if (state.catList.isEmpty()) {
                         Text(text = "No cat breeds found.")
                     } else {
-                        CatGrid(cats = state.catList, viewModel::onFavouriteClick)
+                        CatGrid(
+                            cats = state.catList, viewModel::onFavouriteClick,
+                            onCatClick = { cat ->
+                                navController.navigate(CatDetails.createRoute(cat.id))
+                            })
                     }
                 }
 

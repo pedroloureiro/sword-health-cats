@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android.plugin)
-
+    alias(libs.plugins.kotlinx.serialization.json.plugin)
 }
 
 android {
