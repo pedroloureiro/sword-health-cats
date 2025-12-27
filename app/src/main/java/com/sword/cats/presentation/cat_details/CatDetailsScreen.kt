@@ -46,14 +46,11 @@ fun CatDetailsScreen(
 
         is CatDetailsUiState.Loaded -> {
             val cat = (uiState as CatDetailsUiState.Loaded).cat
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-
-                /* ---------- Top row ---------- */
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -88,7 +85,6 @@ fun CatDetailsScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                /* ---------- Image ---------- */
                 AsyncImage(
                     model = cat.imageUrl,
                     contentDescription = cat.name,
@@ -101,7 +97,6 @@ fun CatDetailsScreen(
 
                 Spacer(Modifier.height(24.dp))
 
-                /* ---------- Details ---------- */
                 DetailItem("Origin", "cat.origin")
                 DetailItem("Temperament", "cat.temperament")
                 DetailItem("Description", "cat.description")

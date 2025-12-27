@@ -29,7 +29,7 @@ import com.sword.cats.presentation.models.CatUiModel
 fun CatGridItem(
     cat: CatUiModel,
     onFavoriteClick: (CatUiModel) -> Unit,
-    onCatClick: (CatUiModel) -> Unit,
+    onCatClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -37,7 +37,7 @@ fun CatGridItem(
             .fillMaxWidth()
             .aspectRatio(1f),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = { onCatClick(cat) }
+        onClick = { onCatClick(cat.id) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(

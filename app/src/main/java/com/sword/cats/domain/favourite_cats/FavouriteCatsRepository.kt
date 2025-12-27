@@ -1,4 +1,4 @@
-package com.sword.cats.domain.cats_favourites
+package com.sword.cats.domain.favourite_cats
 
 import com.sword.cats.data.api.favourites.FavouritesService
 import com.sword.cats.data.api.favourites.models.CatFavouriteResponse
@@ -8,15 +8,15 @@ import com.sword.cats.presentation.models.CatUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-interface CatsFavouritesRepository {
+interface FavouriteCatsRepository {
     fun observeCats(): Flow<List<CatUiModel>>
     suspend fun onFavouriteClick(cat: CatUiModel)
 }
 
-class CatsFavouritesRepositoryImpl(
+class FavouriteCatsRepositoryImpl(
     private val favouritesService: FavouritesService,
     private val catDao: CatDao
-) : CatsFavouritesRepository {
+) : FavouriteCatsRepository {
     override fun observeCats(): Flow<List<CatUiModel>> {
         return catDao.getCatsSortedByNameAsc().map { it.toUiModelList() }
     }

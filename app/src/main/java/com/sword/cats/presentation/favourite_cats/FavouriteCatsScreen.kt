@@ -1,4 +1,4 @@
-package com.sword.cats.presentation.cats_favourites
+package com.sword.cats.presentation.favourite_cats
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,13 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import com.sword.cats.presentation.CatDetails
 import com.sword.cats.presentation.components.CatGrid
 
 @Composable
-fun CatsFavouritesScreen(navController: NavHostController) {
-    val viewModel: CatsFavouritesViewModel = hiltViewModel()
+fun FavouriteCatsScreen(onCatClick: (String) -> Unit) {
+    val viewModel: FavouriteCatsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val modifier = Modifier
 
@@ -42,7 +40,7 @@ fun CatsFavouritesScreen(navController: NavHostController) {
             Spacer(Modifier.height(16.dp))
 
             when (val state = uiState) {
-                is CatsFavouritesUiState.Loading -> {
+                is FavouriteCatsUiState.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -51,15 +49,14 @@ fun CatsFavouritesScreen(navController: NavHostController) {
                     }
                 }
 
-                is CatsFavouritesUiState.Loaded -> {
+                is FavouriteCatsUiState.Loaded -> {
                     if (state.catList.isEmpty()) {
                         Text(text = "You don't have any favourites.")
                     } else {
                         CatGrid(
                             cats = state.catList, viewModel::onFavouriteClick,
-                            onCatClick = { cat ->
-                                navController.navigate(CatDetails.createRoute(cat.id))
-                            })
+                            onCatClick = onCatClick
+                        )
                     }
                 }
             }
