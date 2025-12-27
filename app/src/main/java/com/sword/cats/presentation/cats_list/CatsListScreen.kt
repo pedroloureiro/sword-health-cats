@@ -21,9 +21,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sword.cats.presentation.components.CatGrid
 import com.sword.cats.presentation.components.SearchBar
+import com.sword.cats.presentation.models.CatUiModel
 
 @Composable
-fun CatsListScreen() {
+fun CatsListScreen(onCatClick: (String) -> Unit) {
     val viewModel: CatsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val modifier = Modifier
@@ -52,12 +53,14 @@ fun CatsListScreen() {
                         CircularProgressIndicator()
                     }
                 }
-
                 is CatsListUiState.Loaded -> {
                     if (state.catList.isEmpty()) {
                         Text(text = "No cat breeds found.")
                     } else {
-                        CatGrid(cats = state.catList, viewModel::onFavouriteClick)
+                        CatGrid(
+                            cats = state.catList, viewModel::onFavouriteClick,
+                            onCatClick = onCatClick
+                        )
                     }
                 }
 

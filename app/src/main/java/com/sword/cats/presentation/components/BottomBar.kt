@@ -10,9 +10,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sword.cats.R
-import com.sword.cats.presentation.CatsList
-import com.sword.cats.presentation.Favourites
-import com.sword.cats.presentation.tabRowScreens
+import com.sword.cats.presentation.navigation.CatsList
+import com.sword.cats.presentation.navigation.FavouriteCats
+import com.sword.cats.presentation.navigation.tabRowScreens
 
 @Composable
 fun BottomBar(navController: NavHostController) {
@@ -27,6 +27,7 @@ fun BottomBar(navController: NavHostController) {
                     navController.navigate(destination.route) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
+                            inclusive = true
                         }
                         launchSingleTop = true
                         restoreState = true
@@ -36,7 +37,7 @@ fun BottomBar(navController: NavHostController) {
                     Icon(
                         painter = painterResource(when (destination) {
                             CatsList -> R.drawable.ic_pets
-                            Favourites -> R.drawable.ic_favourite
+                            FavouriteCats -> R.drawable.ic_favourite
                         }),
                         contentDescription = destination.route
                     )
@@ -45,7 +46,7 @@ fun BottomBar(navController: NavHostController) {
                     Text(
                         text = when (destination) {
                             CatsList -> "Cats"
-                            Favourites -> "Favourites"
+                            FavouriteCats -> "Favourites"
                         }
                     )
                 }

@@ -2,8 +2,8 @@ package com.sword.cats.di
 
 import com.sword.cats.data.api.favourites.FavouritesService
 import com.sword.cats.data.database.CatDao
-import com.sword.cats.domain.cats_favourites.CatsFavouritesRepository
-import com.sword.cats.domain.cats_favourites.CatsFavouritesRepositoryImpl
+import com.sword.cats.domain.cat_details.CatDetailsRepository
+import com.sword.cats.domain.cat_details.CatDetailsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,12 +11,12 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class CatsFavouritesModule {
+class CatDetailsModule {
     @Provides
-    fun provideCatsFavouritesRepository(
+    fun provideCatDetailsRepository(
         favouritesService: FavouritesService,
         catDao: CatDao
-    ): CatsFavouritesRepository {
-        return CatsFavouritesRepositoryImpl(favouritesService, catDao)
+    ): CatDetailsRepository {
+        return CatDetailsRepositoryImpl(favouritesService, catDao)
     }
 }

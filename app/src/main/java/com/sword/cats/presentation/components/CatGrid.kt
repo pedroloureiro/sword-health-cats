@@ -15,6 +15,7 @@ import com.sword.cats.presentation.models.CatUiModel
 fun CatGrid(
     cats: List<CatUiModel>,
     onFavoriteClick: (CatUiModel) -> Unit,
+    onCatClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -28,7 +29,7 @@ fun CatGrid(
             items = cats,
             key = { breed -> breed.id }
         ) { catBreedItem ->
-            CatGridItem(cat = catBreedItem, onFavoriteClick)
+            CatGridItem(cat = catBreedItem, onFavoriteClick, onCatClick)
         }
     }
 }

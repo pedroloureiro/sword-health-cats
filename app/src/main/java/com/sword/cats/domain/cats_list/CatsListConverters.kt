@@ -6,14 +6,7 @@ import com.sword.cats.data.database.CatEntity
 import com.sword.cats.presentation.models.CatUiModel
 
 fun List<CatEntity>.toUiModelList() = map { catEntity ->
-    CatUiModel(
-        id = catEntity.id,
-        name = catEntity.name,
-        imageUrl = catEntity.imageUrl,
-        imageId = catEntity.imageId,
-        favouriteId = catEntity.favouriteId,
-        isFavourite = catEntity.isFavourite
-    )
+    catEntity.toUiModel()
 }
 
 fun buildCatEntity(catBreedDto: CatBreedDto, catFavouriteDtoList: List<CatFavouriteDto>): CatEntity? {
@@ -35,3 +28,13 @@ fun buildCatEntity(catBreedDto: CatBreedDto, catFavouriteDtoList: List<CatFavour
         isFavourite = catFavouriteDto != null
     )
 }
+
+fun CatEntity.toUiModel() =
+    CatUiModel(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
+        imageId = imageId,
+        favouriteId = favouriteId,
+        isFavourite = isFavourite
+    )

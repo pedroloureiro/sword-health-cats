@@ -17,6 +17,9 @@ interface CatDao {
     @Query("SELECT * FROM cats WHERE id = :catId")
     suspend fun getCatById(catId: String): CatEntity?
 
+    @Query("SELECT * FROM cats WHERE id = :catId")
+    fun getCatByIdFlow(catId: String): Flow<CatEntity>
+
     @Query(
         """
         UPDATE cats

@@ -1,4 +1,4 @@
-package com.sword.cats.presentation.cats_favourites
+package com.sword.cats.presentation.favourite_cats
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sword.cats.presentation.components.CatGrid
 
 @Composable
-fun CatsFavouritesScreen() {
-    val viewModel: CatsFavouritesViewModel = hiltViewModel()
+fun FavouriteCatsScreen(onCatClick: (String) -> Unit) {
+    val viewModel: FavouriteCatsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val modifier = Modifier
 
@@ -40,7 +40,7 @@ fun CatsFavouritesScreen() {
             Spacer(Modifier.height(16.dp))
 
             when (val state = uiState) {
-                is CatsFavouritesUiState.Loading -> {
+                is FavouriteCatsUiState.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -49,11 +49,14 @@ fun CatsFavouritesScreen() {
                     }
                 }
 
-                is CatsFavouritesUiState.Loaded -> {
+                is FavouriteCatsUiState.Loaded -> {
                     if (state.catList.isEmpty()) {
                         Text(text = "You don't have any favourites.")
                     } else {
-                        CatGrid(cats = state.catList, viewModel::onFavouriteClick)
+                        CatGrid(
+                            cats = state.catList, viewModel::onFavouriteClick,
+                            onCatClick = onCatClick
+                        )
                     }
                 }
             }
