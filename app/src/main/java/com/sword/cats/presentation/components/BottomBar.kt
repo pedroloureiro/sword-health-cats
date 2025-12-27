@@ -1,15 +1,16 @@
 package com.sword.cats.presentation.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.sword.cats.R
 import com.sword.cats.presentation.navigation.CatsList
 import com.sword.cats.presentation.navigation.FavouriteCats
 import com.sword.cats.presentation.navigation.tabRowScreens
@@ -35,10 +36,10 @@ fun BottomBar(navController: NavHostController) {
                 },
                 icon = {
                     Icon(
-                        painter = painterResource(when (destination) {
-                            CatsList -> R.drawable.ic_pets
-                            FavouriteCats -> R.drawable.ic_favourite
-                        }),
+                        imageVector = when (destination) {
+                            CatsList -> Icons.Default.Pets
+                            FavouriteCats -> Icons.Default.Favorite
+                        },
                         contentDescription = destination.route
                     )
                 },

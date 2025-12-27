@@ -13,5 +13,7 @@ data class CatEntity(
     val imageId: String,
     val imageUrl: String,
     val favouriteId: String?,
-    val isFavourite: Boolean
+    val isFavourite: Boolean,
+    val lowerLifeExpectancy: Int?,
+    val higherLifeExpectancy: Int?
 )

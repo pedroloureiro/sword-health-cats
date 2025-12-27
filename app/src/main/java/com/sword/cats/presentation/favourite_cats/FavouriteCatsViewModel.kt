@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sword.cats.domain.favourite_cats.FavouriteCatsRepository
 import com.sword.cats.presentation.models.CatUiModel
+import com.sword.cats.presentation.models.FavouriteCatsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class FavouriteCatsUiState {
-    data class Loaded(val catList: List<CatUiModel>) : FavouriteCatsUiState()
+    data class Loaded(val model: FavouriteCatsUiModel) : FavouriteCatsUiState()
     data object Loading : FavouriteCatsUiState()
 }
 
@@ -21,9 +22,8 @@ sealed class FavouriteCatsUiState {
 class FavouriteCatsViewModel @Inject constructor(
     private val repository: FavouriteCatsRepository
 ) : ViewModel() {
-    val uiState: StateFlow<FavouriteCatsUiState> = repository.observeCats().map { cats ->
-        val filteredCats = cats.filter { cat -> cat.isFavourite }
-        FavouriteCatsUiState.Loaded(filteredCats)
+    val uiState: StateFlow<FavouriteCatsUiState> = repository.observeCats().map { favouriteCatsModel ->
+        FavouriteCatsUiState.Loaded(favouriteCatsModel)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

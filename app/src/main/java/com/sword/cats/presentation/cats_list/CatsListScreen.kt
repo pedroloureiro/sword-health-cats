@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sword.cats.presentation.components.CatGrid
 import com.sword.cats.presentation.components.SearchBar
-import com.sword.cats.presentation.models.CatUiModel
+import com.sword.cats.presentation.components.Title
 
 @Composable
 fun CatsListScreen(onCatClick: (String) -> Unit) {
@@ -36,10 +35,7 @@ fun CatsListScreen(onCatClick: (String) -> Unit) {
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp)
         ) {
-            Text(
-                text = "Cats List",
-                style = MaterialTheme.typography.headlineLarge
-            )
+            Title("Cats List")
             Spacer(Modifier.height(8.dp))
             SearchBar(viewModel::search)
             Spacer(Modifier.height(16.dp))

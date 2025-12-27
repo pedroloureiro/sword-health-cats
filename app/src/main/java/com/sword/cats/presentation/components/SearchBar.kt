@@ -1,6 +1,8 @@
 package com.sword.cats.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -12,8 +14,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import com.sword.cats.R
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -46,7 +46,7 @@ fun SearchBar(
         placeholder = { Text("Search cat breeds") },
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.ic_search),
+                imageVector = Icons.Default.Search,
                 contentDescription = "Search bar"
             )
         }
