@@ -29,6 +29,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.sword.cats.R
+import com.sword.cats.presentation.components.CatDetailItem
 import com.sword.cats.presentation.components.FavouriteIconButton
 
 @Composable
@@ -103,34 +104,13 @@ fun CatDetailsScreen(
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
-                    DetailItem("Origin", cat.origin)
+                    CatDetailItem("Origin", cat.origin)
                     Spacer(Modifier.height(8.dp))
-                    DetailItem("Temperament", cat.temperament)
+                    CatDetailItem("Temperament", cat.temperament)
                     Spacer(Modifier.height(8.dp))
-                    DetailItem("Description", cat.description)
+                    CatDetailItem("Description", cat.description)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun DetailItem(
-    title: String,
-    value: String
-) {
-    Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
 }
