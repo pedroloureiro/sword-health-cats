@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sword.cats.domain.cat_details.CatDetailsRepository
-import com.sword.cats.presentation.models.CatUiModel
+import com.sword.cats.presentation.models.CatDetailsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class CatDetailsUiState {
-    data class Loaded(val cat: CatUiModel) : CatDetailsUiState()
+    data class Loaded(val cat: CatDetailsUiModel) : CatDetailsUiState()
     data object Loading : CatDetailsUiState()
 }
 
@@ -38,7 +38,7 @@ class CatDetailsViewModel @Inject constructor(
                 initialValue = CatDetailsUiState.Loading
             )
 
-    fun onFavouriteClick(cat: CatUiModel) {
+    fun onFavouriteClick(cat: CatDetailsUiModel) {
         viewModelScope.launch {
             repository.onFavouriteClick(cat)
         }

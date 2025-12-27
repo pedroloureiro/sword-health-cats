@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +36,7 @@ fun CatDetailsScreen(
     onBack: () -> Unit,
     viewModel: CatDetailsViewModel = hiltViewModel()
 ) {
+    val scrollState = rememberScrollState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
@@ -53,20 +58,21 @@ fun CatDetailsScreen(
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-
                     IconButton(onClick = onBack) {
                         Icon(
-                            painter = painterResource(android.R.drawable.ic_menu_close_clear_cancel),
-                            contentDescription = "Back"
+                            painter = painterResource(R.drawable.ic_arrow_back),
+                            contentDescription = "Back",
+                            modifier = Modifier.size(32.dp)
                         )
                     }
 
                     Text(
                         text = cat.name,
                         style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
                     )
 
                     IconButton(onClick = { viewModel.onFavouriteClick(cat) }) {
@@ -78,7 +84,8 @@ fun CatDetailsScreen(
                                     R.drawable.ic_favourite_border
                             ),
                             contentDescription = "Favourite",
-                            tint = Color.Magenta
+                            tint = Color.Magenta,
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                 }
@@ -92,19 +99,26 @@ fun CatDetailsScreen(
                         .fillMaxWidth()
                         .height(280.dp)
                         .clip(MaterialTheme.shapes.medium),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
 
                 Spacer(Modifier.height(24.dp))
 
-                DetailItem("Origin", "cat.origin")
-                DetailItem("Temperament", "cat.temperament")
-                DetailItem("Description", "cat.description")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                ) {
+                    DetailItem("Origin", cat.origin)
+                    Spacer(Modifier.height(8.dp))
+                    DetailItem("Temperament", cat.temperament)
+                    Spacer(Modifier.height(8.dp))
+                    DetailItem("Description", cat.description)
+                }
             }
         }
     }
 }
-
 
 @Composable
 fun DetailItem(

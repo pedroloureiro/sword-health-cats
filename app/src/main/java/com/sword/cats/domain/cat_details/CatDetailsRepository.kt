@@ -3,25 +3,24 @@ package com.sword.cats.domain.cat_details
 import com.sword.cats.data.api.favourites.FavouritesService
 import com.sword.cats.data.api.favourites.models.CatFavouriteResponse
 import com.sword.cats.data.database.CatDao
-import com.sword.cats.domain.cats_list.toUiModel
-import com.sword.cats.presentation.models.CatUiModel
+import com.sword.cats.presentation.models.CatDetailsUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface CatDetailsRepository {
-    fun observeCat(catId: String): Flow<CatUiModel>
-    suspend fun onFavouriteClick(cat: CatUiModel)
+    fun observeCat(catId: String): Flow<CatDetailsUiModel>
+    suspend fun onFavouriteClick(cat: CatDetailsUiModel)
 }
 
 class CatDetailsRepositoryImpl(
     private val favouritesService: FavouritesService,
     private val catDao: CatDao
 ) : CatDetailsRepository {
-    override fun observeCat(catId: String): Flow<CatUiModel> {
+    override fun observeCat(catId: String): Flow<CatDetailsUiModel> {
         return catDao.getCatByIdFlow(catId).map { it.toUiModel() }
     }
 
-    override suspend fun onFavouriteClick(cat: CatUiModel) {
+    override suspend fun onFavouriteClick(cat: CatDetailsUiModel) {
         val newFavouriteValue = !cat.isFavourite
         if (newFavouriteValue) {
             markAsFavourite(cat.id, cat.imageId)
@@ -45,7 +44,7 @@ class CatDetailsRepositoryImpl(
         catDao.updateFavouriteId(catId, favouriteId = response.id)
     }
 
-    private suspend fun unmarkAsFavourite(cat: CatUiModel) {
+    private suspend fun unmarkAsFavourite(cat: CatDetailsUiModel) {
         catDao.updateFavourite(
             cat.id,
             isFavourite = false,
