@@ -3,6 +3,7 @@ package com.sword.cats.presentation.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ fun CatDetailItem(
     title: String,
     value: String
 ) {
-    Column {
+    Column(modifier = Modifier.padding(8.dp)) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,

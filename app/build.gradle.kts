@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.ui)
+    implementation(libs.androidx.material.icons.extended.android)
     debugImplementation(libs.androidx.ui.tooling)
 
     //Hilt
